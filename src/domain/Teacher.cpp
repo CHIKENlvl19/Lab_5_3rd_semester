@@ -30,14 +30,21 @@ void Teacher::registerStudent(std::shared_ptr<Student> student) {
 void Teacher::removeStudent(const std::string& studentId) {
     registeredStudents.erase(
         std::remove_if(registeredStudents.begin(), registeredStudents.end(),
-                      [&studentId](const std::shared_ptr<Student>& s) {
-                          return s->getId() == studentId;
+                      [&studentId](const std::weak_ptr<Student>& weak) {
+                          auto s = weak.lock();
+                          return !s || s->getId() == studentId;
                       }),
         registeredStudents.end());
 }
 
 std::vector<std::shared_ptr<Student>> Teacher::getRegisteredStudents() const {
-    return registeredStudents;
+    std::vector<std::shared_ptr<Student>> result;
+    for (const auto& weak : registeredStudents) {
+        if (auto s = weak.lock()) {
+            result.push_back(s);
+        }
+    }
+    return result;
 }
 
 void Teacher::addColleague(std::shared_ptr<Teacher> teacher) {
@@ -45,7 +52,13 @@ void Teacher::addColleague(std::shared_ptr<Teacher> teacher) {
 }
 
 std::vector<std::shared_ptr<Teacher>> Teacher::getColleagues() const {
-    return colleagues;
+    std::vector<std::shared_ptr<Teacher>> result;
+    for (const auto& weak : colleagues) {
+        if (auto t = weak.lock()) {
+            result.push_back(t);
+        }
+    }
+    return result;
 }
 
 std::string Teacher::getInfo() const {

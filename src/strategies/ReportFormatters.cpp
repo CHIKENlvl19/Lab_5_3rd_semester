@@ -29,7 +29,7 @@ std::string JSONFormatter::format(const std::map<std:: string, int>& results) {
 // PlainTextFormatter
 std::string PlainTextFormatter::format(const std::map<std::string, int>& results) {
     std::stringstream ss;
-    ss << "=== Subject Results ===\n";
+    ss << "Subject Results\n";
     for (const auto& pair : results) {
         ss << pair.first << ": " << pair.second << "\n";
     }

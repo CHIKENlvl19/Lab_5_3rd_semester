@@ -15,7 +15,7 @@ class Student :  public User {
 private:
     std::vector<std::shared_ptr<Subject>> enrolledSubjects;
     std:: vector<std::shared_ptr<Grade>> grades;
-    std::map<std::string, std::shared_ptr<Presentation>> registeredPresentations;
+    std::map<std::string, std::weak_ptr<Presentation>> registeredPresentations;
     std::vector<std::shared_ptr<SubmissionRecord>> submissions;
 
 public:

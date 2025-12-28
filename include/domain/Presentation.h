@@ -8,12 +8,12 @@
 class Student;
 class Subject;
 
-class Presentation {
+class Presentation : public std::enable_shared_from_this<Presentation> {
 private:
     std::string id;
     std::string title;
     std::shared_ptr<Subject> subject;
-    std::vector<std::shared_ptr<Student>> registeredStudents;
+    std::vector<std::weak_ptr<Student>> registeredStudents;
     int maxCapacity;
     time_t scheduledDate;
 

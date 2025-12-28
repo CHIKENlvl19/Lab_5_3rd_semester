@@ -48,18 +48,22 @@ void Student::registerForPresentation(std::shared_ptr<Presentation> presentation
     registeredPresentations[presentation->getId()] = presentation;
 }
 
-void Student::unregisterFromPresentation(const std:: string& presentationId) {
+void Student::unregisterFromPresentation(const std::string& presentationId) {
     registeredPresentations.erase(presentationId);
 }
 
 bool Student::isRegisteredForPresentation(const std::string& presentationId) const {
-    return registeredPresentations.find(presentationId) != registeredPresentations.end();
+    auto it = registeredPresentations.find(presentationId);
+    if (it == registeredPresentations.end()) return false;
+    return !it->second.expired();
 }
 
 std::vector<std::shared_ptr<Presentation>> Student::getRegisteredPresentations() const {
     std::vector<std::shared_ptr<Presentation>> result;
     for (const auto& pair : registeredPresentations) {
-        result.push_back(pair. second);
+        if (auto pres = pair.second.lock()) {
+            result.push_back(pres);
+        }
     }
     return result;
 }

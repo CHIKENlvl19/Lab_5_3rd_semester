@@ -11,8 +11,8 @@ class Presentation;
 class Teacher : public User {
 private:
     std::vector<std::shared_ptr<Subject>> subjects;
-    std::vector<std::shared_ptr<Student>> registeredStudents;
-    std::vector<std::shared_ptr<Teacher>> colleagues;
+    std::vector<std::weak_ptr<Student>> registeredStudents;
+    std::vector<std::weak_ptr<Teacher>> colleagues;
 
 public:
     Teacher(const std::string& id, const std::string& name, 

@@ -8,9 +8,7 @@
 std::shared_ptr<DataRepository> DataRepository::instance = nullptr;
 
 std::shared_ptr<DataRepository> DataRepository::getInstance() {
-    if (!instance) {
-        instance = std::shared_ptr<DataRepository>(new DataRepository());
-    }
+    static std::shared_ptr<DataRepository> instance(new DataRepository());
     return instance;
 }
 

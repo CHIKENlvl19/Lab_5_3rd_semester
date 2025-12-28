@@ -26,10 +26,6 @@ int Presentation:: getCapacity() const {
     return maxCapacity;
 }
 
-int Presentation::getRegisteredCount() const {
-    return static_cast<int>(registeredStudents.size());
-}
-
 bool Presentation::isFull() const {
     return static_cast<int>(registeredStudents.size()) >= maxCapacity;
 }
@@ -38,38 +34,45 @@ time_t Presentation::getScheduledDate() const {
     return scheduledDate;
 }
 
+// Обновить методы:
 bool Presentation::registerStudent(std::shared_ptr<Student> student) {
-    if (isFull()) {
-        return false;
+    // Проверить, нет ли уже этого студента
+    for (auto& weak : registeredStudents) {
+        if (auto s = weak.lock()) {
+            if (s->getId() == student->getId()) return false;
+        }
     }
-    if (isStudentRegistered(student->getId())) {
-        return false;
-    }
-    registeredStudents.push_back(student);
-    student->registerForPresentation(std::make_shared<Presentation>(*this));
+    if (isFull()) return false;
+    registeredStudents.push_back(student); // weak_ptr автоматически
+    student->registerForPresentation(shared_from_this()); 
     return true;
 }
 
 bool Presentation::unregisterStudent(const std::string& studentId) {
-    auto it = std::find_if(registeredStudents. begin(), registeredStudents.end(),
-                          [&studentId](const std::shared_ptr<Student>& s) {
-                              return s->getId() == studentId;
-                          });
-    if (it != registeredStudents.end()) {
-        registeredStudents.erase(it);
-        return true;
-    }
-    return false;
+    auto it = std::remove_if(registeredStudents.begin(), registeredStudents.end(),
+        [&studentId](std::weak_ptr<Student>& weak) {
+            auto s = weak.lock();
+            return !s || s->getId() == studentId;
+        });
+    if (it == registeredStudents.end()) return false;
+    registeredStudents.erase(it, registeredStudents.end());
+    return true;
 }
 
-std::vector<std::shared_ptr<Student>> Presentation::getRegisteredStudents() const {
-    return registeredStudents;
+int Presentation::getRegisteredCount() const {
+    // Фильтровать expired weak_ptr
+    int count = 0;
+    for (const auto& weak : registeredStudents) {
+        if (!weak.expired()) count++;
+    }
+    return count;
 }
 
 bool Presentation::isStudentRegistered(const std::string& studentId) const {
-    return std::any_of(registeredStudents. begin(), registeredStudents.end(),
-                      [&studentId](const std::shared_ptr<Student>& s) {
-                          return s->getId() == studentId;
+    return std::any_of(registeredStudents.begin(), registeredStudents.end(),
+                      [&studentId](const std::weak_ptr<Student>& weak) {
+                          auto s = weak.lock();
+                          return s && s->getId() == studentId;
                       });
 }
 

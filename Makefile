@@ -12,6 +12,7 @@ SERVICES_DIR = $(SRC_DIR)/services
 FACTORIES_DIR = $(SRC_DIR)/factories
 REPOSITORIES_DIR = $(SRC_DIR)/repositories
 STRATEGIES_DIR = $(SRC_DIR)/strategies
+UTILS_DIR = $(SRC_DIR)/utils
 
 # Выходные файлы
 TARGET = $(BIN_DIR)/grade_system
@@ -27,7 +28,7 @@ MAIN_SOURCE = $(SRC_DIR)/main.cpp
 
 # Все исходники (без main.cpp)
 SOURCES = $(DOMAIN_SOURCES) $(SERVICES_SOURCES) $(FACTORIES_SOURCES) \
-          $(REPOSITORIES_SOURCES) $(STRATEGIES_SOURCES)
+          $(REPOSITORIES_SOURCES) $(STRATEGIES_SOURCES) $(UTILS_DIR)
 
 # Объектные файлы
 DOMAIN_OBJECTS = $(patsubst $(DOMAIN_DIR)/%.cpp,$(OBJ_DIR)/domain/%.o,$(DOMAIN_SOURCES))
@@ -134,9 +135,7 @@ gdb: debug
 
 # Информация о сборке
 info:
-	@echo "===================================================="
 	@echo "   Grade Management System - Build Information"
-	@echo "===================================================="
 	@echo "Compiler: $(CXX)"
 	@echo "Flags: $(CXXFLAGS)"
 	@echo "Include:  $(INCLUDE_PATH)"
@@ -146,7 +145,6 @@ info:
 	@echo "Factories objects: $(FACTORIES_OBJECTS)"
 	@echo "Repositories objects: $(REPOSITORIES_OBJECTS)"
 	@echo "Strategies objects: $(STRATEGIES_OBJECTS)"
-	@echo "===================================================="
 
 # Переиндексация (удалить всё и пересобрать)
 rebuild: clean all
@@ -161,9 +159,7 @@ distclean: clean
 
 # Просмотр справки
 help:
-	@echo "===================================================="
 	@echo "   Grade Management System - Makefile Help"
-	@echo "===================================================="
 	@echo "Available targets:"
 	@echo ""
 	@echo "  make all           - Build the project (default)"
@@ -183,4 +179,3 @@ help:
 	@echo "  make run          # Build and run"
 	@echo "  make debug        # Build debug version"
 	@echo "  make valgrind     # Check for memory leaks"
-	@echo "===================================================="
